@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV - Adnane KADDIRI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #eef2f7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            user-select: none;
+            /* CHANGEMENT MAJEUR : Autoriser le scroll de la page entière */
+            overflow-y: auto; 
+        }
+
+        .app-logo {
+            position: fixed;
+            top: 12px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .app-logo span {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a2a6c;
+            letter-spacing: 0.5px;
+        }
+
+        .electron-toolbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 8px 16px 8px 80px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            /* Fixer la toolbar pour ne pas défiler avec le CV */
+            position: sticky;
+            top: 10px;
+            z-index: 900;
+        }
+
+        .electron-toolbar button {
+            background: linear-gradient(145deg, #1a2a6c, #0d1b3e);
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .electron-toolbar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 42, 108, 0.3);
+        }
+
+        .electron-toolbar .btn-zoom {
+            background: rgba(26, 42, 108, 0.1);
+            color: #1a2a6c;
+            padding: 8px 14px;
+        }
+
+        .electron-toolbar .btn-zoom:hover {
+            background: rgba(26, 42, 108, 0.2);
+        }
+
+        #zoomLevel {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a2a6c;
+            min-width: 40px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============================================
+           CHANGEMENT MAJEUR ICI : SUPPRESSION DU SCROLL INTERNE
+           ============================================ */
+        .cv-container {
+            max-width: 1200px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 20, 40, 0.15);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 34% 66%;
+            transition: transform 0.2s ease;
+            transform-origin: top center;
+            /* SUPPRIMÉ : max-height: 90vh; overflow-y: auto; */
+        }
+
+        /* ============================================
+           COLONNE GAUCHE - BLEU GLACIER
+           ============================================ */
+        .col-left {
+            background: linear-gradient(160deg, #B3E5F6, #81D4FA);
+            color: #0d1b3e;
+            padding: 28px 20px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            height: 100%;
+        }
+
+        .profile-header {
+            text-align: left;
+            border-bottom: 2px solid rgba(13, 27, 62, 0.12);
+            padding-bottom: 16px;
+            position: relative;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-photo-wrapper {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 110px;
+            height: 110px;
+            flex-shrink: 0;
+        }
+
+        .profile-photo {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            object-fit: cover;
+            background: #ffffff;
+            display: block;
+        }
+
+        .photo-placeholder {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #1a2a6c, #0d1b3e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 32px;
+            font-weight: 700;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .profile-header .name-title {
+            padding-right: 120px;
+        }
+
+        .profile-header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #0d1b3e;
+            line-height: 1.2;
+        }
+
+        .profile-header .badge {
+            display: inline-block;
+            background: #ffb347;
+            color: #0d1b3e;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 4px 14px;
+            border-radius: 30px;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .profile-header .badge i {
+            margin-right: 4px;
+        }
+
+        .profile-header .contact-line {
+            font-size: 12.5px;
+            margin-top: 12px;
+            line-height: 1.8;
+            color: #0d1b3e;
+            padding-right: 120px;
+        }
+
+        .profile-header .contact-line i {
+            width: 20px;
+            color: #ffb347;
+            font-size: 13px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #0d1b3e;
+            border-bottom: 2px solid rgba(13, 27, 62, 0.15);
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+        }
+
+        .section-title i {
+            color: #ffb347;
+            margin-right: 8px;
+        }
+
+        .skills-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 8px;
+        }
+
+        .skills-list li {
+            background: rgba(255, 255, 255, 0.55);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #0d1b3e;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .skills-list li i {
+            margin-right: 4px;
+            color: #ffb347;
+            font-size: 10px;
+        }
+
+        .lang-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(13, 27, 62, 0.07);
+            font-size: 13px;
+        }
+
+        .lang-item span:last-child {
+            color: #e67e22;
+            font-weight: 600;
+        }
+
+        .affil-item {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            font-size: 12.5px;
+            border-left: 4px solid #ffb347;
+            color: #0d1b3e;
+            line-height: 1.4;
+        }
+
+        .affil-item i {
+            color: #ffb347;
+            margin-right: 8px;
+            width: 16px;
+        }
+
+        /* ============================================
+           PROFIL DÉTAILLÉ - ZONE SPÉCIALISATION
+           ============================================ */
+        .profil-detail {
+            background: rgba(255, 255, 255, 0.45);
+            padding: 14px 16px;
+            border-radius: 14px;
+            color: #0d1b3e;
+            font-size: 12.5px;
+            line-height: 1.7;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            /* CHANGEMENT MAJEUR : Suppression de la limite de hauteur et du scroll interne */
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+
+        .profil-detail::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .profil-detail::-webkit-scrollbar-thumb {
+            background: #1a2a6c;
+            border-radius: 10px;
+        }
+
+        .profil-detail strong {
+            color: #0d1b3e;
+        }
+
+        .profil-detail .highlight {
+            color: #1a2a6c;
+            font-weight: 700;
+        }
+
+        .profil-detail .sub-title {
+            font-weight: 700;
+            color: #1a2a6c;
+            display: block;
+            margin-top: 8px;
+            font-size: 13px;
+            border-bottom: 1px dashed rgba(26, 42, 108, 0.2);
+            padding-bottom: 3px;
+        }
+
+        .profil-detail .sub-title:first-child {
+            margin-top: 0;
+        }
+
+        .profil-detail ul {
+            list-style: none;
+            padding-left: 16px;
+            margin: 4px 0 6px;
+        }
+
+        .profil-detail ul li {
+            position: relative;
+            padding-left: 14px;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 2px;
+        }
+
+        .profil-detail ul li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ff8c1a;
+            font-weight: 700;
+        }
+
+        .profil-detail .icon-item {
+            color: #ffb347;
+            margin-right: 4px;
+        }
+
+        /* ============================================
+           COLONNE DROITE
+           ============================================ */
+        .col-right {
+            padding: 28px 28px 32px;
+            background: #ffffff;
+            height: 100%;
+        }
+
+        .col-right .section-title {
+            color: #1a2a6c;
+            border-bottom: 3px solid #ffb347;
+            padding-bottom: 5px;
+            margin-top: 4px;
+        }
+
+        .col-right .section-title i {
+            color: #ffb347;
+            margin-right: 8px;
+        }
+
+        .item-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .item-list li {
+            font-size: 13px;
+            padding: 5px 0 5px 22px;
+            border-bottom: 1px solid #edf2f7;
+            position: relative;
+            line-height: 1.5;
+            color: #1e2a41;
+        }
+
+        .item-list li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #ff8c1a;
+            font-weight: 700;
+        }
+
+        .item-list li .date {
+            color: #e67e22;
+            font-weight: 700;
+            font-size: 12px;
+            display: inline-block;
+            min-width: 90px;
+        }
+
+        .item-list li .sub {
+            font-weight: 700;
+            color: #1a2a6c;
+            font-size: 13px;
+        }
+
+        .item-list li .desc {
+            font-size: 12.5px;
+            color: #2c3e50;
+            display: block;
+            margin-top: 1px;
+        }
+
+        .item-list li .desc i {
+            color: #ff8c1a;
+            margin-right: 4px;
+            width: 14px;
+        }
+
+        .pub-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .pub-list li {
+            font-size: 12px;
+            padding: 5px 0 5px 22px;
+            border-bottom: 1px solid #edf2f7;
+            position: relative;
+            line-height: 1.5;
+            color: #1e2a41;
+        }
+
+        .pub-list li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #ff8c1a;
+            font-weight: 700;
+        }
+
+        .pub-list li .doi {
+            display: inline-block;
+            font-size: 10px;
+            background: #eef3fa;
+            padding: 0 8px;
+            border-radius: 20px;
+            color: #1a2a6c;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .pub-list li em {
+            font-style: italic;
+            color: #2c3e50;
+        }
+
+        .conf-item {
+            background: #f8faff;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 7px;
+            border-left: 5px solid #ffb347;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: #1e2a41;
+        }
+
+        .conf-item strong {
+            color: #0d1b3e;
+        }
+
+        .conf-item i {
+            color: #ff8c1a;
+            margin-right: 6px;
+            width: 16px;
+        }
+
+        .conf-item em {
+            font-style: italic;
+            color: #2c3e50;
+        }
+
+        /* ============================================
+           LOADING
+           ============================================ */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #ffb347;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 24px;
+            border-radius: 30px;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 820px) {
+            .cv-container {
+                grid-template-columns: 1fr;
+            }
+            .col-left {
+                padding: 20px 16px;
+            }
+            .col-right {
+                padding: 20px 16px;
+            }
+            .electron-toolbar {
+                flex-wrap: wrap;
+                justify-content: center;
+                padding-left: 16px;
+            }
+            .profile-photo-wrapper {
+                position: relative;
+                float: right;
+                margin-left: 10px;
+                margin-bottom: 8px;
+                width: 80px;
+                height: 80px;
+                top: auto;
+                right: auto;
+            }
+            .profile-photo {
+                width: 80px;
+                height: 80px;
+            }
+            .photo-placeholder {
+                width: 80px;
+                height: 80px;
+                font-size: 24px;
+            }
+            .profile-header .name-title {
+                padding-right: 0;
+            }
+            .profile-header h1 {
+                font-size: 20px;
+            }
+            .profile-header .contact-line {
+                padding-right: 0;
+            }
+            .app-logo {
+                display: none;
+            }
+            .item-list li .date {
+                display: block;
+                min-width: auto;
+            }
+            .profile-header {
+                min-height: auto;
+            }
+            .profil-detail {
+                max-height: 250px;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+            .cv-container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .electron-toolbar {
+                display: none !important;
+            }
+            .app-logo {
+                display: none !important;
+            }
+            .profile-photo {
+                border-color: #ccc;
+            }
+        }
+
+        .shortcut-hint {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-left: 4px;
+        }
+
+        /* Scrollbar globale */
+        .cv-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cv-container::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .cv-container::-webkit-scrollbar-thumb {
+            background: #1a2a6c;
+            border-radius: 10px;
+        }
+
+        .col-left, .col-right {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .col-right > div {
+            flex-shrink: 0;
+        }
+
+        .col-right > div:last-child {
+            flex: 1;
+        }
+
+        .profile-header .contact-line {
+            word-break: break-word;
+        }
+
+        .profile-header .contact-line br {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Overlay de chargement -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Génération du PDF en cours...</div>
+    </div>
+
+    <!-- Logo de l'application -->
+    <div class="app-logo">
+        <img src="assets/logo.png" alt="Logo" id="appLogo" onerror="this.style.display='none'" />
+        <span>CV KADDIRI</span>
+    </div>
+
+    <!-- Barre d'outils Electron -->
+    <div class="electron-toolbar">
+        <button id="pdfBtn" title="Télécharger en PDF (Ctrl+P)">
+            <i class="fas fa-file-pdf"></i> PDF
+            <span class="shortcut-hint">⌘P</span>
+        </button>
+        <button id="printBtn" title="Imprimer (Ctrl+Shift+P)">
+            <i class="fas fa-print"></i> Imprimer
+        </button>
+        <button class="btn-zoom" id="zoomOutBtn" title="Zoom arrière">
+            <i class="fas fa-search-minus"></i>
+        </button>
+        <span id="zoomLevel">100%</span>
+        <button class="btn-zoom" id="zoomInBtn" title="Zoom avant">
+            <i class="fas fa-search-plus"></i>
+        </button>
+        <button class="btn-zoom" id="zoomResetBtn" title="Zoom par défaut">
+            <i class="fas fa-undo"></i>
+        </button>
+    </div>
+
+    <!-- ===== CV ===== -->
+    <div class="cv-container" id="cvContent">
+
+        <!-- ===== COLONNE GAUCHE ===== -->
+        <div class="col-left">
+
+            <div class="profile-header">
+                <div class="profile-photo-wrapper">
+                    <img src="assets/photo.png" alt="Photo Adnane KADDIRI" class="profile-photo" id="candidatePhoto" />
+                </div>
+                <div class="name-title">
+                    <h1>Adnane KADDIRI</h1>
+                    <div class="badge"><i class="fas fa-graduation-cap"></i> Docteur en Mathématiques et leurs Applications (DMA)</div>
+                </div>
+                <div class="contact-line">
+                    <i class="fas fa-phone-alt"></i> 06 11 76 01 81<br />
+                    <i class="fas fa-envelope"></i> adnanekaddiri@gmail.com<br />
+                    <i class="fas fa-map-marker-alt"></i> Hay Nakhla 1 N°1016, El Kelaa des Sraghna<br />
+                    <i class="fas fa-id-card"></i> ORCID: 0009-0000-8047-9397
+                </div>
+            </div>
+
+            <!-- Compétences -->
+            <div>
+                <div class="section-title"><i class="fas fa-cogs"></i> Compétences</div>
+                <ul class="skills-list">
+                    <li><i class="fas fa-calculator"></i> EDP non-linéaires</li>
+                    <li><i class="fas fa-project-diagram"></i> Systèmes p(.)-Laplacien</li>
+                    <li><i class="fas fa-arrows-alt-h"></i> Problèmes de contact</li>
+                    <li><i class="fas fa-chart-line"></i> Modélisation mathématique</li>
+                    <li><i class="fas fa-code"></i> MATLAB</li>
+                    <li><i class="fab fa-python"></i> Python</li>
+                    <li><i class="fas fa-database"></i> R</li>
+                    <li><i class="fas fa-terminal"></i> C/C++</li>
+                    <li><i class="fas fa-superscript"></i> MAPLE</li>
+                    <li><i class="fas fa-print"></i> LaTeX</li>
+                    <li><i class="fas fa-chart-bar"></i> Analyse numérique</li>
+                    <li><i class="fas fa-brain"></i> Intelligence artificielle</li>
+                </ul>
+            </div>
+
+            <!-- Langues -->
+            <div>
+                <div class="section-title"><i class="fas fa-language"></i> Langues</div>
+                <div class="lang-item"><span>Arabe</span><span>Langue maternelle</span></div>
+                <div class="lang-item"><span>Français</span><span>Courant (écrit/oral)</span></div>
+                <div class="lang-item"><span>Anglais</span><span>Niveau moyen</span></div>
+            </div>
+
+            <!-- Affiliations -->
+            <div>
+                <div class="section-title"><i class="fas fa-users"></i> Affiliations</div>
+                <div class="affil-item"><i class="fas fa-flask"></i> <strong>LITE</strong> – Laboratoire d'Innovation, de Transfert Technologique et d'Entrepreneuriat</div>
+                <div class="affil-item"><i class="fas fa-microscope"></i> <strong>ESTE</strong> – Équipe des Sciences et Technologies de l'Ingénieur</div>
+                <div class="affil-item"><i class="fas fa-chalkboard-teacher"></i> <strong>Enseignant</strong> – Lycée Moulay Ismail</div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PROFIL DÉTAILLÉ - DOCTORAT EN MATHÉMATIQUES -->
+            <!-- ========================================== -->
+            <div>
+                <div class="section-title"><i class="fas fa-book-open"></i> Spécialisation Doctorale</div>
+                <div class="profil-detail">
+
+                    <strong>Doctorat en Mathématiques Appliquées</strong><br />
+                    Spécialiste en analyse des équations aux dérivées partielles (EDP) non linéaires, mes travaux de recherche s'articulent autour de la théorie des opérateurs non standard.
+
+                    <span class="sub-title"><i class="fas fa-cube icon-item"></i> Opérateur p-Laplacien et généralisations</span>
+                    Étude des problèmes elliptiques et paraboliques impliquant l'opérateur <strong>Δ<sub>p</sub>u = div(|∇u|<sup>p−2</sup>∇u)</strong>, en particulier dans les régimes singuliers et dégénérés (<strong>1 &lt; p &lt; ∞</strong>).
+
+                    <span class="sub-title"><i class="fas fa-layer-group icon-item"></i> Problèmes à double phase</span>
+                    Analyse des fonctionnels d'énergie de type <strong>(p, q)-croissance</strong>, modélisant des milieux hétérogènes où la densité d'énergie change de régime (matériaux composites, milieux poreux). Ces modèles intègrent des opérateurs différentiels d'ordre variable et des noyaux non locaux.
+
+                    <span class="sub-title"><i class="fas fa-atom icon-item"></i> Problèmes fractionnaires et non locaux</span>
+                    Formalisme variationnel pour des équations intégro-différentielles faisant intervenir le Laplacien fractionnaire <strong>(−Δ)<sup>s</sup></strong> et les espaces de Sobolev fractionnaires. Ces modèles capturent des phénomènes de mémoire, de diffusion anormale et d'interactions à longue portée.
+
+                    <span class="sub-title"><i class="fas fa-rocket icon-item"></i> Applications en Sciences de l'Ingénieur</span>
+                    <ul>
+                        <li><strong>Dynamique des écoulements hypersoniques</strong> – Modélisation des couches limites turbulentes et des ondes de choc (Mach &gt; 5). Simulations numériques des transferts thermiques extrêmes.</li>
+                        <li><strong>Ingénierie militaire et furtivité avancée</strong> – Détection électromagnétique et empreinte digitale radar via les EDP fractionnaires. Optimisation topologique des surfaces pour la réduction de signature radar (F-35, F-15, J-10, Sukhoï).</li>
+                        <li><strong>Réseaux terrestres et spatiaux</strong> – Propagation d'ondes dans des milieux aléatoires et hétérogènes. Modélisation de la résilience des liaisons de communication sous contraintes extrêmes.</li>
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ===== COLONNE DROITE ===== -->
+        <div class="col-right" id="pdf-content">
+
+            <!-- FORMATIONS -->
+            <div>
+                <div class="section-title"><i class="fas fa-graduation-cap"></i> Formations Académiques</div>
+                <ul class="item-list">
+                    <li>
+                        <span class="date">2022 – 2025</span>
+                        <span class="sub">Doctorat en Mathématiques Appliquées</span>
+                        <span class="desc"><i class="fas fa-university"></i> Université Chouaïb Doukkali, El Jadida – <i class="fas fa-angle-right"></i> <strong>Thèse</strong> : Traitement de quelques équations aux dérivées partielles non-linéaires à exposant variable</span>
+                    </li>
+                    <li>
+                        <span class="date">2020 – 2022</span>
+                        <span class="sub">Master en Mathématiques &amp; Modélisation</span>
+                        <span class="desc"><i class="fas fa-university"></i> Faculté Polydisciplinaire, Safi – <i class="fas fa-angle-right"></i> <strong>Mémoire</strong> : Analyse et approximation numérique d'un problème de contact unilatéral visco-élastique avec frottement de Coulomb</span>
+                    </li>
+                    <li>
+                        <span class="date">2014</span>
+                        <span class="sub">Licence en Mathématiques Fondamentales</span>
+                        <span class="desc"><i class="fas fa-university"></i> Faculté des Sciences Semlalia, Marrakech</span>
+                    </li>
+                    <li>
+                        <span class="date">2013</span>
+                        <span class="sub">DEUG en Mathématiques Fondamentales</span>
+                        <span class="desc"><i class="fas fa-university"></i> Faculté des Sciences Semlalia, Marrakech</span>
+                    </li>
+                    <li>
+                        <span class="date">2011</span>
+                        <span class="sub">Baccalauréat SM-A</span>
+                        <span class="desc"><i class="fas fa-school"></i> Lycée Moulay Ismail, El Kelaa des Sraghna</span>
+                    </li>
+                    <li>
+                        <span class="date">2007</span>
+                        <span class="sub">DEUG en Mathématiques Fondamentales</span>
+                        <span class="desc"><i class="fas fa-university"></i> Faculté des Sciences Semlalia, Marrakech</span>
+                    </li>
+                    <li>
+                        <span class="date">2003</span>
+                        <span class="sub">Baccalauréat Sciences Expérimentales</span>
+                        <span class="desc"><i class="fas fa-school"></i> Lycée Tassaout, El Kelaa des Sraghna</span>
+                    </li>
+                    <li>
+                        <span class="date">2002</span>
+                        <span class="sub">Baccalauréat SM-A</span>
+                        <span class="desc"><i class="fas fa-school"></i> Lycée Moulay Ismail, El Kelaa des Sraghna</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- EXPÉRIENCE -->
+            <div style="margin-top: 14px;">
+                <div class="section-title"><i class="fas fa-briefcase"></i> Expérience Professionnelle</div>
+                <ul class="item-list">
+                    <li>
+                        <span class="date">Depuis 2022</span>
+                        <span class="sub">Doctorant &amp; Chercheur</span>
+                        <span class="desc"><i class="fas fa-flask"></i> Faculté des Sciences &amp; ENSA, El Jadida – <i class="fas fa-angle-right"></i> Recherche avancée sur les EDP non-linéaires, systèmes <strong>p(.)-Laplacien</strong> et problèmes à <strong>double phase</strong></span>
+                    </li>
+                    <li>
+                        <span class="date">En poste</span>
+                        <span class="sub">Professeur de l'Enseignement Secondaire</span>
+                        <span class="desc"><i class="fas fa-chalkboard-teacher"></i> Lycée Moulay Ismail – <i class="fas fa-angle-right"></i> Enseignement des mathématiques au second cycle fondamental. Conception de <strong>supports pédagogiques avancés</strong> et suivi des élèves</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- PUBLICATIONS -->
+            <div style="margin-top: 14px;">
+                <div class="section-title"><i class="fas fa-file-alt"></i> Publications Scientifiques (2024–2026)</div>
+                <ul class="pub-list">
+                    <li>Hassoune, E. M., Jamea, A., Abdelghali, A., &amp; <strong>Kaddiri, A.</strong> (2026). Study of a class of nonlinear heterogeneous diffusion with mixed phases under L∞-data. <em>Mathematical Modelling and Analysis</em>, 31(1), 47–62. <span class="doi">DOI: 10.3846/mma.2026.23889</span></li>
+                    <li><strong>Kaddiri, A.</strong>, Jamea, A., Laghdir, M., &amp; Hassoune, E. M. (2025). Study of entropy solutions to a class of nonlinear degenerate parabolic systems with a measure source. <em>Rendiconti del Circolo Matematico di Palermo</em>, 74(6), 184. <span class="doi">DOI: 10.1007/s12215-025-01301-w</span></li>
+                    <li><strong>Kaddiri, A.</strong>, Jamea, A., Laghdir, M., &amp; Hassoune, E. M. (2025). Entropy solutions for double phase elliptic systems with L1-source terms. <em>Annales Polonici Mathematici</em>. <span class="doi">DOI: 10.4064/ap240818-30-4</span></li>
+                    <li><strong>Kaddiri, A.</strong>, Jamea, A., Laghdir, M., &amp; Hassoune, E. M. (2025). Uniqueness of entropy solutions for specific double-phase systems under Dirichlet-type boundary conditions. <em>Applicationes Mathematicae</em>, 52(2), 1–13. <span class="doi">DOI: 10.4064/am2550-2-2025</span></li>
+                    <li><strong>Kaddiri, A.</strong>, Jamea, A., Abdelghali, A., &amp; Hassoune, E. M. (2025). Well-Posedness of Mixed Fractional-Order Nonlocal Problems with Absorption Phenomena. <em>Boletim da Sociedade Paranaense de Matemática</em>, 43(3), 1-21. <span class="doi">DOI: 10.5269/bspm.78953</span></li>
+                    <li>Hassoune, E. M., Jamea, A., Laghdir, M., &amp; <strong>Kaddiri, A.</strong> (2025). Double-Phase Elliptic Equations with Nonlinear Sources: Existence and Uniqueness of the Weak Solution. <em>Journal of Nonlinear Modeling and Analysis</em>, 52(2), 1-13. <span class="doi">DOI: 10.12150/jnma.2025.1757</span></li>
+                    <li>Hassoune, E. M., Jamea, A., Abdelghali, A., &amp; <strong>Kaddiri, A.</strong> (2025). Entropy solution for double phase elliptic (p,q)-Laplacian problem with Right-Hand Side Measure. <em>Boletim da Sociedade Paranaense de Matemática</em>, 43(2), 1-16. <span class="doi">DOI: 10.5269/bspm.77976</span></li>
+                    <li>Hassoune, E. M., Jamea, A., Laghdir, M., &amp; <strong>Kaddiri, A.</strong> (2025). Weak solution to a class of nonlinear degenerate weighted elliptic (p,q)-Laplacian problem. <em>International Journal of Nonlinear Analysis and Applications</em>, 16(2), 1-14. <span class="doi">DOI: 10.22075/ijnaa.2025.33441.49852002</span></li>
+                    <li><strong>Kaddiri, A.</strong>, Jamea, A., Laghdir, M., &amp; Hassoune, E. M. (2024). Existence of entropy solutions to nonlinear degenerate weighted elliptic (p,q)-Laplacian problem and L1-data. <em>Annals of Mathematics and Computer Science</em>, 22, 100-117. <span class="doi">DOI: 10.56947/amcs.v22.290</span></li>
+                    <li><strong>Kaddiri, A.</strong>, Jamea, A., Laghdir, M., &amp; Hassoune, E. M. (2024). Uniqueness for entropy solution to a class of nonlinear degenerate weighted elliptic (p,q)-Laplacian problem with L1-data. <em>Annals of Mathematics and Computer Science</em>, 23, 131-145. <span class="doi">DOI: 10.56947/amcs.v23.317</span></li>
+                </ul>
+            </div>
+
+            <!-- CONFÉRENCES -->
+            <div style="margin-top: 14px;">
+                <div class="section-title"><i class="fas fa-chalkboard"></i> Conférences &amp; Communications</div>
+
+                <div class="conf-item"><i class="fas fa-calendar-alt"></i> <strong>Congrès International sur l'Éducation, la Recherche, la Science et l'Innovation</strong> – ENSA El Jadida (27-28 Nov 2025) – <em>The DeepOnet method for Solving a class of Typical PDE problems in Barron Spaces via the Sawi Transform Framework</em></div>
+
+                <div class="conf-item"><i class="fas fa-calendar-alt"></i> <strong>ICRAMCS'2025</strong> – Marrakech (24-26 Avr 2025) – <em>A study of a class of nonlinear double-phase parabolic systems: An example from advances in reaction-diffusion models</em></div>
+
+                <div class="conf-item"><i class="fas fa-calendar-alt"></i> <strong>IMAME'2025</strong> – FST Errachidia (22-25 Avr 2025) – <em>Double-Phase Nonlinear Systems with Perturbation functions: An Example of Advanced Reaction-Diffusion Models</em></div>
+
+                <div class="conf-item"><i class="fas fa-calendar-alt"></i> <strong>IWAME'2024</strong> – Université Chouaïb Doukkali, El Jadida (29-30 Mai 2024) – <em>Existence and uniqueness of entropy solution to a class of nonlinear degenerate weighted parabolic p(u)-Laplacian problem with L1-data</em></div>
+
+                <div class="conf-item"><i class="fas fa-calendar-alt"></i> <strong>Congrès International d'Analyse Numérique des EDP</strong> – Faculté des Sciences, Meknès (16-18 Oct 2023) – <em>Existence of entropy solutions to nonlinear parabolic problems with variable exponent and L1-data</em></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Écouter les événements du menu Electron
+        if (window.electronAPI) {
+            window.electronAPI.onDownloadPDF((event) => {
+                generatePDF();
+            });
+        }
+
+        const overlay = document.getElementById('loadingOverlay');
+        const pdfBtn = document.getElementById('pdfBtn');
+        const printBtn = document.getElementById('printBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomResetBtn = document.getElementById('zoomResetBtn');
+        const zoomLevelDisplay = document.getElementById('zoomLevel');
+        const cvContainer = document.getElementById('cvContent');
+
+        let currentZoom = 1;
+
+        async function generatePDF() {
+            overlay.classList.add('active');
+
+            try {
+                const element = document.getElementById('cvContent');
+
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: 1200,
+                    width: 1200,
+                    height: element.scrollHeight,
+                    onclone: (clonedDoc) => {
+                        const clonedElement = clonedDoc.getElementById('cvContent');
+                        if (clonedElement) {
+                            clonedElement.style.transform = 'none';
+                            clonedElement.style.maxHeight = 'none';
+                            clonedElement.style.overflow = 'visible';
+                        }
+                    }
+                });
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const finalWidth = imgWidth * ratio;
+                const finalHeight = imgHeight * ratio;
+
+                let remainingHeight = finalHeight;
+                let yOffset = 0;
+                let pageCount = 0;
+
+                while (remainingHeight > 0) {
+                    const currentHeight = Math.min(pdfHeight, remainingHeight);
+                    
+                    if (pageCount > 0) {
+                        pdf.addPage();
+                    }
+
+                    pdf.addImage(
+                        imgData,
+                        'JPEG',
+                        0,
+                        -yOffset * ratio,
+                        finalWidth,
+                        finalHeight
+                    );
+
+                    remainingHeight -= currentHeight;
+                    yOffset += currentHeight / ratio;
+                    pageCount++;
+                }
+
+                pdf.save('CV_Adnane_KADDIRI.pdf');
+
+                overlay.classList.remove('active');
+
+            } catch (err) {
+                console.error('Erreur PDF:', err);
+                overlay.classList.remove('active');
+                alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+            }
+        }
+
+        function updateZoom() {
+            cvContainer.style.transform = `scale(${currentZoom})`;
+            cvContainer.style.transformOrigin = 'top center';
+            zoomLevelDisplay.textContent = Math.round(currentZoom * 100) + '%';
+        }
+
+        pdfBtn.addEventListener('click', generatePDF);
+
+        printBtn.addEventListener('click', () => {
+            if (window.electronAPI) {
+                window.electronAPI.printCV();
+            } else {
+                window.print();
+            }
+        });
+
+        zoomInBtn.addEventListener('click', () => {
+            if (currentZoom < 1.5) {
+                currentZoom += 0.1;
+                updateZoom();
+            }
+        });
+
+        zoomOutBtn.addEventListener('click', () => {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.1;
+                updateZoom();
+            }
+        });
+
+        zoomResetBtn.addEventListener('click', () => {
+            currentZoom = 1;
+            updateZoom();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p' && !e.shiftKey) {
+                e.preventDefault();
+                generatePDF();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'p') {
+                e.preventDefault();
+                if (window.electronAPI) {
+                    window.electronAPI.printCV();
+                } else {
+                    window.print();
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && (e.key === '=' || e.key === '+')) {
+                e.preventDefault();
+                if (currentZoom < 1.5) {
+                    currentZoom += 0.1;
+                    updateZoom();
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+                e.preventDefault();
+                if (currentZoom > 0.5) {
+                    currentZoom -= 0.1;
+                    updateZoom();
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+                e.preventDefault();
+                currentZoom = 1;
+                updateZoom();
+            }
+        });
+
+        updateZoom();
+
+        document.querySelectorAll('img').forEach(img => {
+            img.onerror = function() {
+                if (this.id === 'candidatePhoto') {
+                    this.style.display = 'none';
+                    const wrapper = this.parentElement;
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'photo-placeholder';
+                    placeholder.textContent = 'AK';
+                    wrapper.appendChild(placeholder);
+                }
+                if (this.id === 'appLogo') {
+                    this.style.display = 'none';
+                }
+            };
+        });
+    </script>
+
+</body>
+</html>
